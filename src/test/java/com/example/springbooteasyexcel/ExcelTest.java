@@ -8,6 +8,7 @@ import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.example.springbooteasyexcel.entity.Student;
 import com.example.springbooteasyexcel.utils.DataGetter;
 import listener.StudentListener;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -49,6 +50,10 @@ public class ExcelTest {
         ExcelWriterBuilder writeWorkBook = EasyExcel.write("写入信息表.xlsx", Student.class);
         ExcelWriterSheetBuilder sheet = writeWorkBook.sheet();
         sheet.doWrite(DataGetter.initData());
+    }
+    @Test
+    public void test03() {
+        System.out.println(new DateTime().toString("yyyyMMdd"));
     }
 
 }
