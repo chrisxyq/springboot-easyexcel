@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author chrisxu
@@ -28,20 +29,21 @@ public class WebStudentListener extends AnalysisEventListener<Student> {
     @Autowired
     private StudentService studentService;
     List<Student> students = new ArrayList<>();
+    private  Map tblHeadMap;
 
-    /**
-     * 模拟分批保存数据库
-     *
-     * @param student
-     * @param analysisContext
-     */
+    public Map getTblHeadMap() {
+        return tblHeadMap;
+    }
+
+    @Override
+    public void invokeHeadMap(Map headMap, AnalysisContext context) {
+        System.out.println("表头数据" + headMap);
+        tblHeadMap=headMap;
+    }
+
     @Override
     public void invoke(Student student, AnalysisContext analysisContext) {
-        students.add(student);
-        if (students.size() % 5 == 0) {
-            studentService.readExcel(students);
-            students.clear();
-        }
+        System.out.println("表数据" + student);
     }
 
     @Override

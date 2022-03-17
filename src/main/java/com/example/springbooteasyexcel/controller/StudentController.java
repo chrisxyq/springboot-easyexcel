@@ -22,6 +22,7 @@ import com.example.springbooteasyexcel.entity.Student;
 import com.example.springbooteasyexcel.listener.WebStudentListener;
 import com.example.springbooteasyexcel.utils.DataGetter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,6 +41,10 @@ import java.util.List;
 public class StudentController {
     @Autowired
     private WebStudentListener webStudentListener;
+    @Lookup
+    private WebStudentListener getWebStudentListener(){
+        return null;
+    }
 
     /**
      * 文件上传
@@ -70,7 +75,26 @@ public class StudentController {
         try {
             ExcelReader excelReader = EasyExcelFactory.read(uploadExcel.getInputStream()).build().read(new ReadSheet(0));
             int row = excelReader.analysisContext().readRowHolder().getRowIndex();
+            List<List<String>> head = excelReader.analysisContext().readSheetHolder().getHead();
             System.out.println(row);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "success";
+    }
+    /**
+     * 读取文件表头
+     * @param uploadExcel
+     * @return
+     */
+    @RequestMapping("read2")
+    @ResponseBody
+    public String readExcel2(MultipartFile uploadExcel) {
+        try {
+            ExcelReaderBuilder readWorkBook = EasyExcel.read(uploadExcel.getInputStream(), Student.class, webStudentListener);
+            System.out.println(webStudentListener.getTblHeadMap());
+            readWorkBook.sheet().doRead();
+            System.out.println(webStudentListener.getTblHeadMap());
         } catch (IOException e) {
             e.printStackTrace();
         }
