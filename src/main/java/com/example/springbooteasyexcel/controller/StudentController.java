@@ -21,6 +21,12 @@ import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.example.springbooteasyexcel.entity.Student;
 import com.example.springbooteasyexcel.listener.WebStudentListener;
 import com.example.springbooteasyexcel.utils.DataGetter;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Controller;
@@ -31,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,13 +48,39 @@ import java.util.List;
 public class StudentController {
     @Autowired
     private WebStudentListener webStudentListener;
+
     @Lookup
-    private WebStudentListener getWebStudentListener(){
+    private WebStudentListener getWebStudentListener() {
         return null;
     }
-
     /**
-     * 文件上传
+     * apache poi读取上传文件
+     *
+     * @param uploadExcel
+     * @return
+     */
+    @RequestMapping("read0")
+    @ResponseBody
+    public String readExcel0(MultipartFile uploadExcel) {
+        try {
+            InputStream inputStream = uploadExcel.getInputStream();
+//            HSSFWorkbook workbook = new HSSFWorkbook(inputStream);
+            XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.getRow(0);
+            Cell cell = row.getCell(0);
+            String stringCellValue = cell.getStringCellValue();
+//            double numericCellValue = cell.getNumericCellValue();
+            System.out.println(stringCellValue);
+            inputStream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "success";
+    }
+    /**
+     * easyexcel读取上传文件
      *
      * @param uploadExcel
      * @return
@@ -65,7 +98,9 @@ public class StudentController {
     }
 
     /**
+     * easyexcel读取上传文件
      * 读取上传文件行数
+     *
      * @param uploadExcel
      * @return
      */
@@ -82,8 +117,11 @@ public class StudentController {
         }
         return "success";
     }
+
     /**
+     * easyexcel读取上传文件
      * 读取文件表头
+     *
      * @param uploadExcel
      * @return
      */
@@ -102,6 +140,7 @@ public class StudentController {
     }
 
     /**
+     * easyexcel
      * 文件下载
      *
      * @param response
@@ -126,6 +165,7 @@ public class StudentController {
     }
 
     /**
+     * easyexcel
      * 根据模板文件下载
      * 多条数据写入
      *
@@ -152,33 +192,10 @@ public class StudentController {
         return "success";
     }
 
-    /**
-     * 单条数据写入
-     *
-     * @param response
-     * @return
-     * @throws IOException
-     */
-    @RequestMapping("writetemplate1")
-    @ResponseBody
-    public String writeExcelTemplate1(HttpServletResponse response) throws IOException {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        //防止中文乱码
-        String fileName = URLEncoder.encode("模板下载excel", "UTF-8");
-        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + fileName + ".xlsx");
-
-
-        ServletOutputStream outputStream = response.getOutputStream();
-        String template = "singleTemplate.xlsx";
-        ExcelWriterBuilder writeWorkBook = EasyExcel.write(outputStream, Student.class).withTemplate(template);
-        ExcelWriterSheetBuilder sheet = writeWorkBook.sheet();
-        List<Student> students = DataGetter.initData();
-        sheet.doFill(new ArrayList<>());
-        return "success";
-    }
 
     /**
+     * easyexcel
+     * 根据模板文件下载
      * 单条数据写入
      *
      * @param response
