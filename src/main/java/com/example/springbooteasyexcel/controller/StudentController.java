@@ -12,7 +12,10 @@ package com.example.springbooteasyexcel.controller;
  */
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.builder.ExcelReaderBuilder;
+import com.alibaba.excel.read.metadata.ReadSheet;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.example.springbooteasyexcel.entity.Student;
@@ -50,6 +53,24 @@ public class StudentController {
         try {
             ExcelReaderBuilder readWorkBook = EasyExcel.read(uploadExcel.getInputStream(), Student.class, webStudentListener);
             readWorkBook.sheet().doRead();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "success";
+    }
+
+    /**
+     * 读取上传文件行数
+     * @param uploadExcel
+     * @return
+     */
+    @RequestMapping("read1")
+    @ResponseBody
+    public String readExcel1(MultipartFile uploadExcel) {
+        try {
+            ExcelReader excelReader = EasyExcelFactory.read(uploadExcel.getInputStream()).build().read(new ReadSheet(0));
+            int row = excelReader.analysisContext().readRowHolder().getRowIndex();
+            System.out.println(row);
         } catch (IOException e) {
             e.printStackTrace();
         }
