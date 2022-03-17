@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +28,15 @@ import java.util.List;
  * ctrl+shift+/：注释多行
  */
 public class ExcelTest {
+    @Test
+    public void test010() {
+        String s="C:\\work\\3.txt";
+        System.out.println(s);
+        String[] split = s.split("\\\\");
+        for (String s1 : new ArrayList<>(Arrays.asList(split))) {
+            System.out.println(s1+" ");
+        }
+    }
     /**
      * 简单读
      * 工作簿：excel文件
